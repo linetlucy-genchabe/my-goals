@@ -17,6 +17,12 @@ export class GoalComponent implements OnInit {
     new Goal(6,'Plot my world domination plan','Cause I am an evil overlord',new Date(2023,3,14)),
   ];
 
+  addNewGoal(goal:any){
+    let goalLength = this.goals.length;
+    goal.id = goalLength+1;
+    goal.completeDate = new Date(goal.completeDate)
+    this.goals.push(goal)
+  }
   constructor() { }
 
   ngOnInit() {
