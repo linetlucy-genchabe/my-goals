@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient} from '@angular/common/http';
 import { AlertService } from '../alert-service/alert.service';
 import { Goal } from '../goal';
 import { GoalService } from '../goal-service/goal.service';
+import { Quote } from '../quote-class/quote';
+
 
 @Component({
   selector: 'app-goal',
@@ -10,9 +13,12 @@ import { GoalService } from '../goal-service/goal.service';
   providers:[GoalService]
 })
 export class GoalComponent implements OnInit {
+
+  
   
   goals:Goal[];
   alertService:AlertService;
+  quote!: Quote;
 
   addNewGoal(goal:any){
     let goalLength = this.goals.length;
@@ -20,14 +26,31 @@ export class GoalComponent implements OnInit {
     goal.completeDate = new Date(goal.completeDate)
     this.goals.push(goal)
   }
-  constructor(goalService:GoalService, alertService:AlertService) { 
+  constructor(goalService:GoalService, alertService:AlertService, private http:HttpClient) { 
     this.goals=goalService.getGoals()
     this.alertService= alertService;
-
+    
   }
 
   ngOnInit() {
+    interface ApiResponse{
+      author:string;
+      quote:string;
   }
+
+  this.http.get<ApiResponse>("http://quotes.stormconsultancy.co.uk/random.json").subscribe((data: { author: string; quote: string; })=>{
+    // Succesful API request
+    this.quote = new Quote(data.author, data.quote)
+})
+} //err=>{
+//   this.quote = new Quote("Winston Churchill","Never never give up!")
+//   console.log("An error occurred")
+
+
+
+    
+  
+
   toggleDetails(index: any){
     this.goals[index].showDescription = !this.goals[index].showDescription;
   }
